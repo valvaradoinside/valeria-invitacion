@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="twitter:image" content="https://valeria-invitacion-production.up.railway.app/og.jpg">
+<meta name="twitter:image" content="https://valeria-invitacion-production.up.railway.app/og.jpg?b=banner1">
 <title>Valeria XV · Disco Aloha</title>
 <meta name="description" content="¡Acompáñame a celebrar mis 15 años! Una fiesta de la piscina a la pista.">
 <meta property="og:title" content="Valeria XV · Disco Aloha">
 <meta property="og:description" content="¡Acompáñame a celebrar mis 15 años! Una fiesta de la piscina a la pista.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://valeria-invitacion-production.up.railway.app/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image" content="https://valeria-invitacion-production.up.railway.app/og.jpg?b=banner1"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,8 +35,8 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;scroll-snap-type:none}}
 body{margin:0;font-family:var(--f-body);color:var(--vino);background:var(--crema);
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
 img{display:block;max-width:100%}
@@ -45,10 +45,25 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:70;opa
 
 .shell{width:100%;max-width:470px;margin:0 auto;position:relative;z-index:1;
   padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
-section{position:relative;padding-block:clamp(30px,7vw,54px)}
-.reveal{opacity:0;transform:translateY(22px);transition:opacity 1s ease, transform 1s cubic-bezier(.2,.7,.2,1)}
+/* Cada sección = una pantalla completa (se desliza para avanzar) */
+section{position:relative;z-index:2;min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  scroll-snap-align:start;padding-block:clamp(44px,8vh,72px)}
+.hero{padding:0!important}
+.panel-cue{margin-top:clamp(14px,3vh,26px);display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--tinta);font-family:var(--f-display);font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+.panel-cue .arrow{width:14px;height:14px;border-right:1.5px solid var(--hibisco);border-bottom:1.5px solid var(--hibisco);transform:rotate(45deg);animation:bob 1.9s ease-in-out infinite}
+.reveal{opacity:0;transform:translateY(28px) scale(.985);transition:opacity .9s ease, transform .9s cubic-bezier(.2,.75,.25,1)}
 .reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1!important;transform:none!important;transition:none}}
+/* animación escalonada de los hijos directos al activarse la pantalla */
+.stagger>*{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s cubic-bezier(.2,.75,.25,1)}
+.stagger.in>*{opacity:1;transform:none}
+.stagger.in>*:nth-child(1){transition-delay:.05s}
+.stagger.in>*:nth-child(2){transition-delay:.16s}
+.stagger.in>*:nth-child(3){transition-delay:.27s}
+.stagger.in>*:nth-child(4){transition-delay:.38s}
+.stagger.in>*:nth-child(5){transition-delay:.49s}
+.stagger.in>*:nth-child(6){transition-delay:.60s}
+@media (prefers-reduced-motion:reduce){.reveal,.stagger>*{opacity:1!important;transform:none!important;transition:none}}
 
 .eyebrow{font-family:var(--f-display);font-weight:600;letter-spacing:.34em;text-transform:uppercase;font-size:.7rem;color:var(--fucsia);text-align:center}
 .divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px auto}
@@ -115,6 +130,19 @@ section{position:relative;padding-block:clamp(30px,7vw,54px)}
 .btn-solid:hover{background:var(--fucsia-2);transform:translateY(-2px);box-shadow:0 12px 28px rgba(200,51,107,.34)}
 .btn-soft{background:rgba(255,255,255,.6);color:var(--fucsia);border-color:var(--linea)}
 .btn-soft:hover{background:rgba(255,255,255,.9);transform:translateY(-2px)}
+/* Botón-opción: claro por defecto, rosa oscuro al tocar o marcar */
+.btn-opt{background:rgba(255,255,255,.5);color:var(--fucsia);border:1.6px solid var(--linea)}
+.btn-opt:hover,.btn-opt:focus-visible,.btn-opt:active,.btn-opt.on{background:var(--fucsia-2);color:#fff;border-color:var(--fucsia-2);box-shadow:0 10px 26px rgba(168,40,90,.32);transform:translateY(-2px)}
+/* Corona + arco dorado sobre la fecha */
+.tiara{width:clamp(52px,15vw,74px);height:auto;margin:0 auto 4px;display:block}
+.datewrap{position:relative;margin-top:6px}
+.date-arch{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(300px,90%);z-index:0;overflow:visible;pointer-events:none}
+.date-arch path{fill:none;stroke:var(--oro);stroke-width:1.6;stroke-linecap:round;stroke-dasharray:430;stroke-dashoffset:430;transition:stroke-dashoffset 1.5s ease .25s}
+.stagger.in .date-arch path{stroke-dashoffset:0}
+.date-arch .st{fill:var(--oro);opacity:0;transition:opacity .5s ease 1.25s}
+.stagger.in .date-arch .st{opacity:1}
+.datewrap .datecard{position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){.date-arch path{stroke-dashoffset:0;transition:none}.date-arch .st{opacity:1}}
 
 /* ============ DRESS CODE ============ */
 .dress-head{display:flex;align-items:center;justify-content:center;gap:14px}
@@ -124,6 +152,56 @@ section{position:relative;padding-block:clamp(30px,7vw,54px)}
 .dress-title{font-family:var(--f-display);font-weight:700;color:var(--fucsia);letter-spacing:.14em;text-transform:uppercase;font-size:clamp(1.5rem,6.5vw,2rem);line-height:1}
 .dress-title .eb{display:block;font-size:.4em;letter-spacing:.34em;color:var(--tinta);font-weight:600;margin-bottom:3px}
 .dress-intro{text-align:center;font-family:var(--f-display);font-style:italic;color:var(--tinta);font-size:clamp(.95rem,4vw,1.08rem);margin:12px auto 0;max-width:30ch}
+/* Dress code interactivo: sol / luna (día / noche) */
+.dress{transition:background .6s ease}
+.dress.night{background:linear-gradient(160deg,#3b2454,#2c1b3d 58%,#1f1230)}
+.dress.night .dress-title{color:#fff}
+.dress.night .dress-title .eb,.dress.night .dress-intro,.dress.night .nota{color:#e9cfe0}
+.dc-toggle{display:flex;gap:26px;justify-content:center;margin:20px auto 0}
+.dc-opt{display:inline-flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;border:none;background:transparent;
+  font-family:var(--f-display);font-weight:600;letter-spacing:.16em;text-transform:uppercase;font-size:.64rem;color:var(--tinta);padding:4px}
+.dress.night .dc-opt{color:#c9aed0}
+.dc-opt .ico{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.6);border:1.8px solid var(--linea);transition:transform .3s,box-shadow .3s,background .3s,border-color .3s;box-shadow:0 6px 16px rgba(111,31,61,.1)}
+.dc-opt .ico svg{width:34px;height:34px;display:block}
+.dc-opt:hover .ico{transform:translateY(-2px)}
+.dc-opt.on{color:var(--fucsia-2)}
+.dc-opt.on .ico{transform:scale(1.1)}
+.dc-opt.sun.on .ico{background:radial-gradient(circle at 50% 42%,#ffe49a,#f4a93e);border-color:#ef9f34;box-shadow:0 10px 24px rgba(240,150,40,.45)}
+.dc-opt.moon.on{color:#ffd98a}
+.dc-opt.moon.on .ico{background:radial-gradient(circle at 50% 42%,#5a3d7a,#241436);border-color:#3a2550;box-shadow:0 10px 24px rgba(20,8,32,.5)}
+.dc-opt.sun .ico{color:#f4a93e}.dc-opt.sun.on .ico{color:#fff}
+.dc-opt.moon .ico{color:#6a4a8a}.dc-opt.moon.on .ico{color:#ffd98a}
+.dc-hint{text-align:center;font-family:var(--f-display);font-style:italic;color:var(--tinta);font-size:.86rem;margin-top:10px;animation:hintp 2.2s ease-in-out infinite}
+@keyframes hintp{0%,100%{opacity:.5}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.dc-hint{animation:none;opacity:.8}}
+.dress.night .dc-hint{color:#c9aed0}
+.dc-stage{margin-top:16px;position:relative}
+.dc-view{display:none}
+.dc-view.on{display:block;animation:dcfade .55s cubic-bezier(.2,.75,.25,1)}
+@keyframes dcfade{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
+.outfit{position:relative;max-width:430px;margin:0 auto;text-align:left;border-radius:22px;overflow:hidden;
+  padding:clamp(18px,4.6vw,26px);box-shadow:0 14px 34px rgba(200,51,107,.12)}
+.dc-view.day .outfit{background:radial-gradient(130% 120% at 12% 0%,rgba(238,138,174,.4),rgba(247,221,228,.22) 55%,rgba(255,255,255,.12) 88%)}
+.dc-view.night .outfit{background:linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.04))}
+.outfit .obadge{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;margin-bottom:9px;font-size:1.35rem;box-shadow:0 5px 14px rgba(111,31,61,.16)}
+.outfit .obadge svg{width:26px;height:26px}
+.dc-view.day .obadge{background:#fff}
+.dc-view.night .obadge{background:#241436}
+.o-head{font-family:var(--f-display);font-weight:600;letter-spacing:.2em;text-transform:uppercase;font-size:.64rem;font-variant-numeric:lining-nums}
+.dc-view.day .o-head{color:var(--fucsia)} .dc-view.night .o-head{color:#ffd98a}
+.o-title{font-family:var(--f-display);font-weight:700;font-size:clamp(1.5rem,6.6vw,2rem);line-height:1;margin:2px 0}
+.dc-view.day .o-title{color:var(--fucsia)} .dc-view.night .o-title{color:#fff}
+.o-sub{font-family:var(--f-display);font-style:italic;font-size:clamp(1rem,4.4vw,1.2rem);margin-bottom:6px}
+.dc-view.day .o-sub{color:var(--vino)} .dc-view.night .o-sub{color:#e9cfe0}
+.o-li{display:flex;gap:.5em;align-items:flex-start;font-size:.92rem;line-height:1.45;margin-top:8px}
+.dc-view.day .o-li{color:var(--vino)} .dc-view.night .o-li{color:#f3e4ee}
+.o-li b{color:var(--fucsia-2)} .dc-view.night .o-li b{color:#ffb3df}
+.outfit .ocktl{position:absolute;right:-16px;bottom:-18px;width:120px;opacity:.6;pointer-events:none;-webkit-mask-image:radial-gradient(ellipse 62% 64% at 58% 52%,#000 42%,transparent 82%);mask-image:radial-gradient(ellipse 62% 64% at 58% 52%,#000 42%,transparent 82%)}
+.outfit .oball{position:absolute;right:8px;bottom:10px;width:clamp(70px,21vw,94px)}
+.dc-view.night .outfit{padding-right:clamp(80px,25vw,110px)}
+.outfit .swatches{display:flex;gap:7px;margin-top:12px}
+.outfit .swatches i{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.08)}
 .blocks{display:flex;flex-direction:column;gap:0;margin-top:18px}
 .block{position:relative;border-radius:24px;padding:clamp(18px,4.5vw,26px);display:flex;align-items:center;gap:14px;overflow:hidden;box-shadow:0 12px 32px rgba(200,51,107,.09)}
 .block .content{flex:1;min-width:0;position:relative;z-index:1}
@@ -251,13 +329,286 @@ section{position:relative;padding-block:clamp(30px,7vw,54px)}
 }
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);opacity:0;background:var(--vino);color:#fff;border-radius:999px;padding:.65em 1.2em;font-size:.85rem;z-index:80;transition:opacity .3s,transform .3s;pointer-events:none;box-shadow:0 10px 26px rgba(111,31,61,.35)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ===== Transición entre pantallas: destello + bola disco al centro ===== */
+#xfx{position:fixed;inset:0;z-index:75;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0}
+#xfx.go{animation:xfade .7s ease-out}
+@keyframes xfade{0%{opacity:0}28%{opacity:1}100%{opacity:0}}
+#xfx .halo{position:absolute;width:150vmax;height:150vmax;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.38),rgba(255,185,217,.14) 34%,rgba(255,185,217,0) 62%)}
+#xfx .xspark{position:absolute;color:#ff9ed0;width:15px;height:15px;opacity:0}
+#xfx.go .xspark{animation:xsp .7s ease-out}
+#xfx .xspark svg{width:100%;height:100%}#xfx .xspark svg path{fill:currentColor}
+@keyframes xsp{0%{opacity:0;transform:scale(.4)}45%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:scale(.6)}}
+@media (prefers-reduced-motion:reduce){#xfx{display:none}}
+
+/* ================================================================
+   V2 · REDISEÑO FIEL A REFERENCIAS (revisado como expertos)
+   ================================================================ */
+section{overflow:hidden}
+.shell{z-index:2}
+/* --- Flores de acuarela en esquinas (multiply sobre crema) --- */
+.corner{position:absolute;z-index:0;pointer-events:none;mix-blend-mode:multiply}
+.corner img{width:100%;height:auto;display:block;
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at var(--mx,36%) var(--my,36%),#000 52%,transparent 86%);
+          mask-image:radial-gradient(ellipse 80% 80% at var(--mx,36%) var(--my,36%),#000 52%,transparent 86%)}
+.corner.tl{top:-10px;left:-18px}.corner.tr{top:-10px;right:-18px}
+.corner.bl{bottom:-10px;left:-18px}.corner.br{bottom:-10px;right:-18px}
+.corner.tr img,.corner.br img{transform:scaleX(-1)}
+
+/* --- #1 HERO: imagen completa desde arriba --- */
+.hero{justify-content:flex-start!important}
+.hero .shell{margin-top:clamp(16px,4vh,30px)}
+
+/* --- #2 DATOS --- */
+.gold-sep{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px auto 0;max-width:290px}
+.gold-sep .l{flex:1;height:1.4px;background:linear-gradient(90deg,transparent,var(--oro));border-radius:2px}
+.gold-sep .l.r{background:linear-gradient(90deg,var(--oro),transparent)}
+.gold-sep .fl{color:var(--rosa);font-size:1rem;line-height:1;filter:drop-shadow(0 1px 1px rgba(200,51,107,.2))}
+.date-swag{display:block;margin:6px auto 0;width:clamp(150px,44vw,205px);mix-blend-mode:multiply;opacity:.96;
+  -webkit-mask-image:radial-gradient(ellipse 72% 82% at 50% 44%,#000 52%,transparent 86%);
+          mask-image:radial-gradient(ellipse 72% 82% at 50% 44%,#000 52%,transparent 86%)}
+.loc-pin{color:var(--fucsia);display:inline-flex;vertical-align:-4px}
+.loc-pin svg{width:22px;height:22px}
+.arch-gleam{fill:#fff6da;opacity:0;filter:drop-shadow(0 0 5px #f0cf93) drop-shadow(0 0 2px #fff)}
+.stagger.in .arch-gleam{opacity:1}
+@media(prefers-reduced-motion:reduce){.arch-gleam{display:none}}
+/* Botones estilo referencia: icono | etiqueta, dorado */
+.btn-ref{position:relative;display:flex;align-items:center;justify-content:flex-start;gap:0;cursor:pointer;
+  border-radius:999px;padding:.86em 1.3em;font-family:var(--f-display);font-weight:600;font-size:clamp(.98rem,4.2vw,1.1rem);
+  border:1.8px solid var(--oro);background:rgba(255,255,255,.5);color:var(--fucsia);text-decoration:none;
+  box-shadow:0 8px 20px rgba(200,51,107,.1);transition:background .25s,color .25s,transform .25s,box-shadow .25s}
+.btn-ref:focus-visible{outline:3px solid var(--hibisco);outline-offset:3px}
+.btn-ref .bic{flex:none;width:30px;display:flex;justify-content:center;color:var(--oro)}
+.btn-ref .bic svg{width:25px;height:25px;display:block}
+.btn-ref .bsep{flex:none;width:1.5px;height:24px;background:var(--oro);opacity:.55;margin:0 14px 0 8px;border-radius:2px;transition:background .25s,opacity .25s}
+.btn-ref .blab{flex:1;text-align:center;letter-spacing:.015em}
+.btn-ref.on,.btn-ref:hover,.btn-ref:focus-visible{background:linear-gradient(90deg,var(--fucsia),var(--fucsia-2));color:#fff;border-color:var(--oro);transform:translateY(-2px);box-shadow:0 13px 28px rgba(168,40,90,.34)}
+.btn-ref.on .bic,.btn-ref:hover .bic{color:#ffe9c0}
+.btn-ref.on .bsep,.btn-ref:hover .bsep{background:#ffe9c0;opacity:.8}
+
+/* --- #3 DRESS CODE (rediseño) --- */
+.dc-eyebrow{font-family:var(--f-display);font-weight:600;letter-spacing:.34em;text-transform:uppercase;font-size:clamp(.66rem,3vw,.78rem);color:var(--tinta);text-align:center}
+.dress.night .dc-eyebrow{color:#d9bfe0}
+.dc-titlerow{display:flex;align-items:center;justify-content:center;gap:clamp(12px,4vw,24px);margin-top:5px}
+.dc-bigtitle{font-family:var(--f-display);font-weight:700;color:var(--fucsia);letter-spacing:.09em;text-transform:uppercase;font-size:clamp(1.7rem,8.5vw,2.5rem);line-height:1}
+.dress.night .dc-bigtitle{color:#fff}
+.dc-toggle{display:contents}
+.dc-opt{display:inline-flex;flex-direction:column;align-items:center;gap:0;cursor:pointer;border:none;background:transparent;padding:0}
+.dc-opt .ico{width:clamp(50px,13vw,60px);height:clamp(50px,13vw,60px);border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.65);border:2px solid var(--linea);transition:transform .3s,box-shadow .3s,background .3s,border-color .3s;box-shadow:0 6px 16px rgba(111,31,61,.14)}
+.dc-opt .ico svg{width:56%;height:56%;display:block}
+.dc-opt:hover .ico{transform:translateY(-2px)}
+.dc-opt.on .ico{transform:scale(1.08)}
+.dc-opt.sun .ico{color:#f4a93e}
+.dc-opt.sun.on .ico{background:radial-gradient(circle at 50% 42%,#ffe49a,#f4a93e);border-color:#ef9f34;color:#fff;box-shadow:0 10px 26px rgba(240,150,40,.5)}
+.dc-opt.moon .ico{color:#6a4a8a}
+.dc-opt.moon .ico{background:#efe6f2}
+.dc-opt.moon.on .ico{background:radial-gradient(circle at 50% 40%,#5a3d7a,#241436);border-color:#3a2550;color:#ffd98a;box-shadow:0 10px 26px rgba(20,8,32,.55)}
+.dress.night .dc-opt.sun .ico{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.2)}
+.dress.night .dc-opt.moon:not(.on) .ico{background:rgba(255,255,255,.1)}
+.dc-hint{text-align:center;font-family:var(--f-display);font-style:italic;color:var(--tinta);font-size:.88rem;margin-top:12px;animation:hintp 2.2s ease-in-out infinite}
+.dress.night .dc-hint{color:#d9bfe0}
+.dress-intro{text-align:center;font-family:var(--f-display);font-style:italic;color:var(--tinta);font-size:clamp(.95rem,4vw,1.08rem);margin:6px auto 0;max-width:30ch}
+.dress.night .dress-intro{color:#e6cfe8}
+/* Tarjeta de outfit */
+.dc-stage{margin-top:18px;position:relative}
+.dc-view{display:none}
+.dc-view.on{display:block;animation:dcfade .5s cubic-bezier(.2,.75,.25,1)}
+.dc-card{position:relative;overflow:hidden;border-radius:26px;text-align:left;min-height:238px;
+  padding:clamp(18px,5vw,26px);padding-right:clamp(116px,38vw,180px);box-shadow:0 16px 42px rgba(111,31,61,.2)}
+.dc-view.day .dc-card{background:radial-gradient(120% 120% at 2% 0%,#fffaf6,#fde7ef 62%,#f9d6e5);border:1px solid rgba(255,255,255,.7);padding-right:clamp(78px,24vw,135px)}
+.dc-view.night .dc-card{background:linear-gradient(150deg,#58356f,#3c2454 55%,#2a1740);border:1px solid rgba(255,255,255,.14)}
+.dc-tagrow{display:flex;align-items:center;margin-bottom:10px}
+.dc-tagbadge{width:clamp(40px,11vw,48px);height:clamp(40px,11vw,48px);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2;flex:none;box-shadow:0 5px 15px rgba(111,31,61,.24)}
+.dc-tagbadge svg{width:56%;height:56%}
+.dc-view.day .dc-tagbadge{background:#fff;color:#f4a93e}
+.dc-view.night .dc-tagbadge{background:#1f1230;color:#ffd98a}
+.dc-tag{margin-left:-13px;padding:.52em 1em .52em 22px;border-radius:999px;font-family:var(--f-display);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:clamp(.62rem,2.9vw,.76rem);font-variant-numeric:lining-nums}
+.dc-view.day .dc-tag{background:linear-gradient(90deg,#ffd4e6,#ffbdd7);color:var(--fucsia)}
+.dc-view.night .dc-tag{background:linear-gradient(90deg,rgba(255,255,255,.2),rgba(255,255,255,.08));color:#fff}
+.dc-bigname{font-family:var(--f-display);font-style:italic;font-weight:700;font-size:clamp(2rem,10.5vw,3rem);line-height:1;margin:.1em 0 0;position:relative;display:inline-block}
+.dc-view.day .dc-bigname{color:var(--rosa)}
+.dc-view.night .dc-bigname{color:#fff}
+.dc-bigname .swoosh{position:absolute;left:2%;bottom:-8px;width:72%;height:10px}
+.dc-bigname .swoosh path{fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;opacity:.9}
+.dc-subname{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:clamp(1.05rem,4.8vw,1.32rem);margin:.18em 0 .3em}
+.dc-view.day .dc-subname{color:var(--fucsia-2)}
+.dc-view.night .dc-subname{color:#f0dcec}
+.dc-item{display:flex;gap:.55em;align-items:flex-start;font-family:var(--f-body);font-size:clamp(.9rem,3.8vw,1rem);line-height:1.42;margin-top:.55em}
+.dc-item .di{flex:none;width:30px;display:flex;justify-content:center}
+.dc-item .di svg{width:26px;height:26px}
+.dc-view.day .dc-item{color:var(--vino)}.dc-view.day .dc-item .di{color:#e86a8e}
+.dc-view.night .dc-item{color:#f3e7f0}.dc-view.night .dc-item .di{color:#e9cfe0}
+.dc-item b{color:inherit;font-weight:700}
+.dc-view.day .dc-item b{color:var(--fucsia-2)}.dc-view.night .dc-item b{color:#ffc2e2}
+.dc-swatches{display:flex;gap:8px;margin-top:14px}
+.dc-swatches i{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.5);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.dc-art{position:absolute;z-index:1;pointer-events:none}
+.dc-view.day .dc-art{right:-8px;bottom:-12px;width:clamp(104px,33vw,165px);mix-blend-mode:multiply;
+  -webkit-mask-image:radial-gradient(ellipse 64% 70% at 56% 48%,#000 48%,transparent 84%);mask-image:radial-gradient(ellipse 64% 70% at 56% 48%,#000 48%,transparent 84%)}
+.dc-view.night .dc-art{right:2px;top:40px;width:clamp(96px,30vw,140px)}
+.dc-lights{position:absolute;top:-2px;left:0;right:0;height:64px;z-index:1;pointer-events:none}
+.dc-lights .bulb{animation:btwk 2.4s ease-in-out infinite}
+.dress .nota{text-align:center;font-style:italic;color:var(--tinta);font-size:.9rem;margin:16px auto 0;background:rgba(247,221,228,.5);border-radius:14px;padding:.75em 1.1em;max-width:370px}
+.dress.night .nota{color:#e6cfe8;background:rgba(255,255,255,.08)}
+
+/* --- #4 CRONOGRAMA (rediseño) --- */
+.crono .shell{position:relative;z-index:2}
+.crono-ball{width:clamp(84px,23vw,116px);margin:0 auto -4px;display:block}
+.crono-ttl{font-family:var(--f-display);font-weight:700;color:var(--fucsia);text-transform:uppercase;letter-spacing:.05em;font-size:clamp(2rem,10.5vw,3rem);line-height:.95;margin:0;text-shadow:0 2px 14px rgba(200,51,107,.18)}
+.crono-ttl .cap{font-size:1.28em;font-style:italic;font-weight:700}
+.crono-ribbon{display:flex;align-items:center;justify-content:center;gap:10px;margin:7px auto 0}
+.crono-ribbon .rl{height:1.5px;width:clamp(16px,7vw,42px);background:var(--hibisco)}
+.crono-ribbon .rb{font-family:var(--f-display);font-weight:600;letter-spacing:.3em;text-transform:uppercase;font-size:clamp(.82rem,4vw,1.1rem);color:#fff;background:linear-gradient(90deg,#ff6faa,#e34d93);padding:.34em 1.25em .34em 1.45em;clip-path:polygon(9% 0,91% 0,100% 50%,91% 100%,9% 100%,0 50%)}
+.crono-sub{font-family:var(--f-display);font-style:italic;color:var(--fucsia);font-size:clamp(.95rem,4vw,1.08rem);margin:12px auto 0;max-width:30ch;line-height:1.35}
+.crono-sub .u{display:block;height:2px;width:130px;margin:7px auto 0;background:linear-gradient(90deg,transparent,var(--fucsia) 30%,var(--fucsia) 70%,transparent);border-radius:2px;transform:scaleX(0);transform-origin:center;transition:transform .9s ease .3s}
+.stagger.in .crono-sub .u,.reveal.in .crono-sub .u{transform:scaleX(1)}
+.timeline{position:relative;margin:22px auto 0;max-width:460px;display:flex;flex-direction:column;gap:9px}
+.tl-line{position:absolute;top:16px;bottom:16px;left:calc(8px + clamp(92px,29vw,124px) + 25px);width:0;border-left:2px dashed var(--hibisco);opacity:.5;transform:scaleY(0);transform-origin:top;transition:transform 1s ease}
+.timeline.drawn .tl-line{transform:scaleY(1)}
+@media(prefers-reduced-motion:reduce){.tl-line{transform:scaleY(1)}}
+.ti{position:relative;display:grid;grid-template-columns:clamp(92px,29vw,124px) 30px minmax(0,1.2fr);align-items:center;column-gap:10px;
+  background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.75);border-radius:999px;padding:.6em .7em;
+  box-shadow:0 8px 20px rgba(200,51,107,.08);opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease}
+.timeline.drawn .ti{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.ti{opacity:1;transform:none}}
+.ti .t{text-align:center;font-family:var(--f-display);font-weight:700;color:var(--fucsia);font-size:clamp(.8rem,3.5vw,.98rem);font-variant-numeric:lining-nums;letter-spacing:-.01em}
+.ti .mk{justify-self:center;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--rosa);box-shadow:0 0 0 3px rgba(255,255,255,.6);animation:mkpulse 2.6s ease-in-out infinite}
+@keyframes mkpulse{0%,100%{box-shadow:0 0 0 3px rgba(255,255,255,.55),0 0 0 6px rgba(255,95,162,0)}50%{box-shadow:0 0 0 3px rgba(255,255,255,.55),0 0 0 10px rgba(255,95,162,.16)}}
+@media(prefers-reduced-motion:reduce){.ti .mk{animation:none}}
+.ti .rt{display:flex;align-items:center;gap:.5em;text-align:left;min-width:0}
+.ti .em{font-size:1.45rem;flex:none;line-height:1;animation:floatY 5s ease-in-out infinite}
+.ti:nth-child(odd) .em{animation-delay:.6s}
+@media(prefers-reduced-motion:reduce){.ti .em{animation:none}}
+.ti .a{font-family:var(--f-display);font-weight:700;color:var(--vino);font-size:clamp(.84rem,3.6vw,1rem);line-height:1.14;text-transform:none;letter-spacing:0}
+.ti .note{display:block;font-family:var(--f-body);font-weight:400;font-size:.66rem;color:var(--tinta);margin-top:1px;line-height:1.2}
+.ti.pivot{background:linear-gradient(90deg,#e34d93,#b22e6b);border-color:transparent;box-shadow:0 13px 28px rgba(178,46,107,.36);padding-left:1.4em;padding-right:1.4em}
+.ti.pivot .t,.ti.pivot .a{color:#fff}
+.ti.pivot .note{color:#ffd9ea}
+.ti.pivot .mk{background:#b22e6b;border-color:#fff}
+.ti.pivot::before,.ti.pivot::after{content:"✦";position:absolute;color:#fff;font-size:.78rem;top:50%;transform:translateY(-50%);opacity:.9}
+.ti.pivot::before{left:9px}.ti.pivot::after{right:9px}
+
+/* --- #5 LLUVIA DE SOBRES --- */
+.gift{background:radial-gradient(130% 90% at 50% 0%,#ffe1ec,#fbeef0 55%,var(--crema) 100%)}
+.gift .shell{position:relative;z-index:2}
+.gift-env{width:clamp(56px,16vw,76px);margin:0 auto 4px;display:block}
+.gift-eb{font-family:var(--f-display);font-weight:600;letter-spacing:.42em;text-transform:uppercase;font-size:clamp(.72rem,3.4vw,.92rem);color:var(--fucsia);display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:16px;padding-left:.42em}
+.gift-eb::before,.gift-eb::after{content:"✦";color:var(--hibisco);font-size:.78em;letter-spacing:0}
+.gift-verse{margin:0;font-family:var(--f-display);font-style:italic;line-height:1.5}
+.gift-verse .l1{display:block;font-weight:800;color:var(--fucsia);font-size:clamp(1.3rem,6.2vw,1.72rem);text-shadow:0 2px 12px rgba(200,51,107,.16)}
+.gift-verse .l2{display:block;font-weight:500;color:var(--tinta);font-size:clamp(1.05rem,4.9vw,1.34rem);margin-top:.12em}
+.gift-underline{display:block;margin:18px auto 0;width:min(240px,74%)}
+.gift-underline path{fill:none;stroke:var(--fucsia);stroke-width:2;stroke-linecap:round}
+.gift-underline .hrt{fill:var(--fucsia)}
+
+/* --- CIERRE: botón oscuro al confirmar --- */
+.cierre .btn-solid.pressed{background:var(--fucsia-2);transform:scale(.97)}
+
+/* ================= AJUSTES v3 (feedback) ================= */
+/* Dress code — DÍA: tema amarillo/sol coherente (como la noche es azul oscuro) */
+.dress.day{background:linear-gradient(165deg,#fff7e0 0%,#ffedc6 56%,#ffe1b6 100%)}
+.dress.day .dc-eyebrow{color:#b5701f}
+.dc-view.day .dc-card{background:linear-gradient(150deg,#fffbf2,#ffefcf 56%,#ffe3b8);border:1px solid rgba(255,255,255,.75)}
+.dc-view.day .dc-tag{background:linear-gradient(90deg,#ffd98a,#ffc766);color:#9a4e12}
+.dc-view.day .dc-tagbadge{color:#f4a93e}
+.dc-view.day .dc-bigname{color:var(--fucsia)}
+.dc-view.day .dc-subname{color:#b5701f}
+.dc-view.day .dc-item{color:#6a4a2a}
+.dc-view.day .dc-item b{color:var(--fucsia-2)}
+/* Banda dividida: "Trae tu outfit blanco" + "Ver el cronograma" (día y noche) */
+.dress-foot{margin:24px auto 0;max-width:430px;border-radius:22px;padding:18px 18px 20px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  background:linear-gradient(160deg,#fffdfb,#fbe6ef);border:1px solid var(--linea);box-shadow:0 14px 32px rgba(200,51,107,.18)}
+.dress .dress-foot .nota{margin:0;background:none;color:var(--tinta);font-style:italic;font-size:.93rem;line-height:1.42;max-width:340px}
+.dress-foot .btn-solid{margin:0}
+/* RSVP — más atractivo */
+.rsvp{background:radial-gradient(130% 80% at 50% 0%,#ffe6ef,var(--crema) 72%)}
+.rsvp-card{background:linear-gradient(165deg,rgba(255,255,255,.92),rgba(255,239,245,.78));border:1px solid rgba(255,255,255,.8);border-radius:26px;box-shadow:0 18px 46px rgba(200,51,107,.18)}
+.rsvp .gold-sep{margin:10px auto 0;max-width:230px}
+
+/* ================= AJUSTES v4 (feedback) ================= */
+/* Quitar flores laterales de escritorio (se veían lavadas) */
+.side-flower{display:none!important}
+/* "Desliza" clickeable para avanzar a la siguiente sección */
+.scrollcue,.panel-cue{text-decoration:none;cursor:pointer}
+/* Dress DÍA = amarillo coherente (como la noche es azul oscuro) */
+.dress.day{background:linear-gradient(165deg,#ffe7a0 0%,#ffda78 55%,#ffce60 100%)}
+.dc-view.day .dc-card{background:linear-gradient(150deg,#fffae0,#fff0b2 55%,#ffe68e);border:1px solid rgba(255,255,255,.85)}
+.dress.day .dc-eyebrow{color:#9c5912}
+.dc-view.day .dc-subname{color:#9c5912}
+.dc-view.day .dc-item{color:#6a4a16}
+/* Lluvia de sobres: sobre que se abre y entran billetes */
+.env-anim{width:clamp(76px,22vw,100px);height:auto;margin:0 auto 6px;display:block;overflow:visible}
+.env-anim .flap-c{transform-origin:48px 40px;animation:flapO 3.6s ease-in-out infinite}
+@keyframes flapO{0%{transform:scaleY(-1)}15%,86%{transform:scaleY(1)}100%{transform:scaleY(-1)}}
+.env-anim .bill{animation:billIn 3.6s ease-in-out infinite;opacity:0}
+.env-anim .bill.b2{animation-delay:.5s}.env-anim .bill.b3{animation-delay:1s}
+@keyframes billIn{0%,15%{transform:translateY(-24px);opacity:0}32%{opacity:1}66%{opacity:1}100%{transform:translateY(13px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.env-anim .flap-c{animation:none;transform:scaleY(1)}.env-anim .bill{animation:none;opacity:1}}
+/* RSVP · estilo referencia (acuarelas en esquinas, marco, píldoras) */
+.rsvp{background:var(--crema)}
+.rsvp .shell{position:relative;z-index:2}
+.rflor{position:absolute;z-index:3;pointer-events:none;mix-blend-mode:multiply;line-height:0}
+.rflor img{width:100%;display:block}
+.rflor.tl{top:-42px;left:-30px;width:clamp(94px,26vw,132px)}
+.rflor.tr{top:-42px;right:-30px;width:clamp(94px,26vw,132px)}
+.rflor.bl{bottom:-16px;left:-18px;width:clamp(100px,28vw,142px)}
+.rflor.br{bottom:-16px;right:-18px;width:clamp(100px,28vw,142px)}
+.rsvp-card{background:linear-gradient(165deg,#fffaf5,#fdeef2);position:relative}
+.rsvp-card::before{content:"";position:absolute;inset:9px;border:1px solid var(--oro);border-radius:20px;opacity:.5;pointer-events:none}
+.rsvp-card>*{position:relative;z-index:1}
+.rsvp .field label{display:flex;align-items:center;gap:10px}
+.rsvp .field label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--hibisco),transparent);opacity:.6}
+.rsvp .choice .opt span{border-radius:999px;padding:.85em 1em;font-family:var(--f-display);font-weight:600;letter-spacing:.02em}
+.rsvp .choice .opt input:checked + span{background:linear-gradient(90deg,#e34d93,#b22e6b)}
+.rsvp .ticket{background:linear-gradient(90deg,#ffd3e4,#ffbfd6);border:none;border-radius:16px;color:var(--vino);box-shadow:0 6px 16px rgba(200,51,107,.12);align-items:center}
+.rsvp .ticket b{color:var(--fucsia-2)}
+.rsvp .submit{border-radius:999px;background:linear-gradient(90deg,#e34d93,#b22e6b);font-family:var(--f-display);font-weight:600;letter-spacing:.02em}
+.rsvp-heart{display:block;margin:14px auto 0;width:140px}
+.rsvp-heart path{fill:none;stroke:var(--fucsia);stroke-width:2;stroke-linecap:round}
+.rsvp-heart .h{fill:var(--fucsia)}
+
+/* ================= AJUSTES v5 ================= */
+/* DRESS CODE: eyebrow centrado, título en UNA línea, sol/luna debajo centrados */
+.dc-bigtitle{display:block;text-align:center;white-space:nowrap;margin:4px auto 0;font-size:clamp(1.85rem,9.2vw,2.7rem);letter-spacing:.08em;line-height:1}
+.dc-toggle{display:flex!important;justify-content:center;align-items:flex-start;gap:clamp(34px,16vw,80px);margin-top:18px}
+.dc-opt .ico{position:relative}
+/* Anillo pulsante en la opción NO seleccionada: invita a tocar */
+.dc-opt:not(.on) .ico::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid currentColor;opacity:0;animation:tapRing 1.9s ease-out infinite}
+@keyframes tapRing{0%{transform:scale(.88);opacity:.55}70%{opacity:0}100%{transform:scale(1.38);opacity:0}}
+@media(prefers-reduced-motion:reduce){.dc-opt:not(.on) .ico::after{animation:none}}
+/* "Toca el sol o la luna" como etiqueta aesthetic */
+.dc-hint{display:flex;align-items:center;gap:8px;width:fit-content;margin:16px auto 0;padding:.42em 1.05em;border-radius:999px;
+  font-family:var(--f-display);font-style:italic;font-size:.96rem;letter-spacing:.015em;animation:none;
+  background:rgba(255,255,255,.55);box-shadow:0 5px 16px rgba(200,51,107,.12);backdrop-filter:blur(2px)}
+.dress.day .dc-hint{color:#9c5912}
+.dress.night .dc-hint{color:#ead0ea;background:rgba(255,255,255,.12)}
+.dc-hint .tap{display:inline-block;animation:tapBounce 1.25s ease-in-out infinite}
+@keyframes tapBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){.dc-hint .tap{animation:none}}
+/* Tarjeta "nos vestimos de blanco" (ref. imagen 50) */
+.wn-card{position:relative;overflow:hidden;max-width:430px;margin:24px auto 0;border-radius:24px;padding:22px 20px 24px;text-align:center;
+  background:linear-gradient(160deg,#fff3f7,#ffe4ed 58%,#ffd8e5);border:1px solid rgba(255,255,255,.75);box-shadow:0 16px 36px rgba(200,51,107,.18)}
+.wn-card::before{content:"";position:absolute;inset:8px;border:1px solid rgba(255,255,255,.75);border-radius:18px;pointer-events:none;z-index:2}
+.wn-flor{position:absolute;z-index:0;pointer-events:none;mix-blend-mode:multiply;line-height:0}
+.wn-flor img{width:100%;display:block}
+.wn-flor.tl{top:-16px;left:-16px;width:clamp(72px,21vw,100px)}
+.wn-flor.br{bottom:-16px;right:-16px;width:clamp(80px,24vw,116px)}
+.wn-card>.wn-in{position:relative;z-index:1}
+.wn-garments{width:clamp(104px,32vw,140px);height:auto;margin:0 auto 4px;display:block}
+.wn-head{font-family:var(--f-display);font-style:italic;font-weight:700;color:var(--fucsia);font-size:clamp(1.34rem,6.2vw,1.72rem);line-height:1.14;margin:2px 0 0;text-shadow:0 2px 12px rgba(200,51,107,.14)}
+.wn-swoosh{display:block;width:130px;height:9px;margin:5px auto 0}
+.wn-swoosh path{fill:none;stroke:var(--fucsia);stroke-width:2.4;stroke-linecap:round}
+.wn-note{font-family:var(--f-body);font-style:italic;color:var(--tinta);font-size:.85rem;line-height:1.4;margin:11px auto 0;max-width:300px}
+.wn-btn{margin:16px auto 0;display:inline-flex;align-items:center;justify-content:center;gap:.5em;border-radius:999px}
+.wn-btn .arr{width:19px;height:19px;flex:none}
+/* Cronograma: ícono vestido blanco en la hora de transición */
+.ti .em .dress-ico{width:25px;height:25px;display:block}
 </style>
 </head>
 <body>
 
-
-<div class="side-flower left"><img src="assets/flowers_tr.webp" alt="" style="transform:scaleX(-1)"></div>
-<div class="side-flower right"><img src="assets/flowers_br.webp" alt=""></div>
 
 <!-- ===== HERO: tarjeta KV a sangre ===== -->
 <section class="hero">
@@ -269,90 +620,143 @@ section{position:relative;padding-block:clamp(30px,7vw,54px)}
     <span class="spark white" style="left:5%;top:26%;width:8px;height:8px;animation-delay:2.3s"><svg viewBox="0 0 20 20"><path d="M10 0 L11.6 8.4 L20 10 L11.6 11.6 L10 20 L8.4 11.6 L0 10 L8.4 8.4 Z"/></svg></span>
     <span class="spark" style="left:34%;top:8%;width:18px;height:18px;animation-delay:.6s"><svg viewBox="0 0 20 20"><path d="M10 0 L11.6 8.4 L20 10 L11.6 11.6 L10 20 L8.4 11.6 L0 10 L8.4 8.4 Z"/></svg></span>
   </div>
-  <div class="shell"><div class="scrollcue"><span>Desliza</span><span class="arrow"></span></div></div>
+  <div class="shell"><a class="scrollcue" href="#datos-panel"><span>Desliza</span><span class="arrow"></span></a></div>
 </section>
 
 <!-- ===== DATOS ===== -->
-<section class="datos">
-  <div class="shell reveal">
+<section class="datos" id="datos-panel">
+  <div class="shell stagger">
+    <svg class="tiara" viewBox="0 0 96 56" aria-hidden="true"><g fill="none" stroke="#d9a84e" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"><path d="M10 47 C 14 30 20 26 26 33 C 32 40 36 42 40 42 C 44 42 48 24 48 16 C 48 24 52 42 56 42 C 60 42 64 40 70 33 C 76 26 82 30 86 47 Z"/><path d="M8 50 H88"/></g><circle cx="48" cy="12" r="3.4" fill="#d9a84e"/><circle cx="26" cy="29" r="2.4" fill="#d9a84e"/><circle cx="70" cy="29" r="2.4" fill="#d9a84e"/><circle cx="10" cy="44" r="2.2" fill="#d9a84e"/><circle cx="86" cy="44" r="2.2" fill="#d9a84e"/></svg>
     <p class="gracias-script">¡Gracias por ser parte de mi vida!</p>
+    <div class="gold-sep" aria-hidden="true"><span class="l"></span><span class="fl">❀</span><span class="l r"></span></div>
     <p class="gracias-sub">Acompáñame a celebrarla</p>
-    <div class="datecard">
-      <div class="dc-dow">Sábado</div>
-      <div class="dc-mid"><span class="ln"></span><span class="dc-num">5</span><span class="ln r"></span></div>
-      <div class="dc-mon">Diciembre · 2026</div>
-      <div class="dc-time">🕑 2:00 a 9:00 PM</div>
+    <div class="datewrap">
+      <svg class="date-arch" viewBox="0 0 300 130" aria-hidden="true">
+        <path id="archP" d="M18 124 A 134 134 0 0 1 282 124"/>
+        <circle class="st" cx="150" cy="6" r="2.6"/><circle class="st" cx="24" cy="74" r="2"/><circle class="st" cx="276" cy="74" r="2"/>
+        <circle class="arch-gleam" r="3.4"><animateMotion dur="4.6s" repeatCount="indefinite" rotate="auto" keyPoints="0;1;1" keyTimes="0;0.62;1" calcMode="linear"><mpath href="#archP"/></animateMotion></circle>
+      </svg>
+      <div class="datecard">
+        <div class="dc-dow">Sábado</div>
+        <div class="dc-mid"><span class="ln"></span><span class="dc-num">5</span><span class="ln r"></span></div>
+        <div class="dc-mon">Diciembre · 2026</div>
+        <div class="dc-time">🕑 2:00 a 9:00 PM</div>
+      </div>
     </div>
-    <div class="lugar"><span class="pin">📍</span> Villa Torera<span class="zona">La Lagunita, Venezuela</span></div>
+    <div class="lugar"><span class="loc-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"/><circle cx="12" cy="10" r="2.6"/></svg></span> Villa Torera<span class="zona">La Lagunita, Venezuela</span></div>
     <div class="actions">
-      <a class="btn btn-solid" id="maps-btn" href="#" target="_blank" rel="noopener"><span>🗺️</span> Cómo llegar</a>
-      <a class="btn btn-soft" id="cal-btn" href="#" target="_blank" rel="noopener"><span>🗓️</span> Agregar a mi calendario</a>
-      <a class="btn btn-soft" href="#rsvp"><span>💌</span> Confirmar asistencia</a>
+      <a class="btn-ref" id="maps-btn" href="#" target="_blank" rel="noopener"><span class="bic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg></span><span class="bsep"></span><span class="blab">Cómo llegar</span></a>
+      <a class="btn-ref" id="cal-btn" href="#" target="_blank" rel="noopener"><span class="bic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span class="bsep"></span><span class="blab">Agregar a mi calendario</span></a>
+      <a class="btn-ref" href="#rsvp"><span class="bic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 2.6 5 5.9 5c2 0 3.3 1.1 4.1 2.3.8-1.2 2.1-2.3 4.1-2.3 3.3 0 5 3.3 3.5 6.7C19.5 16.4 12 21 12 21Z"/></svg></span><span class="bsep"></span><span class="blab">Confirmar asistencia</span></a>
     </div>
+    <a class="panel-cue" href="#dress-panel"><span>Desliza</span><span class="arrow"></span></a>
   </div>
 </section>
 
 <!-- ===== DRESS CODE ===== -->
-<section class="dress">
-  <div class="shell reveal">
-    <div class="dress-head">
-      <span class="de-badge sun" aria-hidden="true">☀️</span>
-      <div class="dress-title"><span class="eb">Qué llevar puesto</span>Dress Code</div>
-      <span class="de-badge moon" aria-hidden="true">🌙</span>
+<section class="dress day" id="dress-panel">
+  <div class="shell stagger">
+    <div class="dc-eyebrow">Qué llevar puesto</div>
+    <h2 class="dc-bigtitle">Dress Code</h2>
+    <div class="dc-toggle" role="tablist">
+      <button class="dc-opt sun on" data-mode="day" type="button" aria-label="Pool Time — dress code de día">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.6" x2="12" y2="4.3"/><line x1="12" y1="19.7" x2="12" y2="22.4"/><line x1="1.6" y1="12" x2="4.3" y2="12"/><line x1="19.7" y1="12" x2="22.4" y2="12"/><line x1="4.8" y1="4.8" x2="6.7" y2="6.7"/><line x1="17.3" y1="17.3" x2="19.2" y2="19.2"/><line x1="19.2" y1="4.8" x2="17.3" y2="6.7"/><line x1="6.7" y1="17.3" x2="4.8" y2="19.2"/></g></svg></span>
+      </button>
+      <button class="dc-opt moon" data-mode="night" type="button" aria-label="All White Night — dress code de noche">
+        <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 14.4 A 8.6 8.6 0 1 1 9.6 3 A 6.7 6.7 0 0 0 21 14.4 Z"/></svg></span>
+      </button>
     </div>
+    <div class="dc-hint"><span class="tap">👆</span> Toca el sol o la luna</div>
     <p class="dress-intro">La fiesta se transforma contigo: de la piscina a la pista.</p>
-    <div class="blocks">
-      <div class="block pool">
-        <div class="content">
-          <span class="badge" aria-hidden="true">☀️</span>
-          <div class="fase">De día · 2:00 a 5:00 PM</div>
-          <div class="hrs">Pool Time</div>
-          <div class="main">Ropa de piscina y outfit cómodo</div>
-          <div class="li"><span>🩱</span><span>Trae tu traje de baño y disfruta el agua con tu mejor actitud tropical.</span></div>
+    <div class="dc-stage">
+      <!-- DÍA · POOL TIME -->
+      <div class="dc-view day on">
+        <div class="dc-card">
+          <div class="dc-tagrow">
+            <span class="dc-tagbadge"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="4.4"/><line x1="12" y1="19.6" x2="12" y2="22"/><line x1="2" y1="12" x2="4.4" y2="12"/><line x1="19.6" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="6.7" y2="6.7"/><line x1="17.3" y1="17.3" x2="19" y2="19"/><line x1="19" y1="5" x2="17.3" y2="6.7"/><line x1="6.7" y1="17.3" x2="5" y2="19"/></g></svg></span>
+            <span class="dc-tag">De día · 2:00 a 5:00 PM</span>
+          </div>
+          <div class="dc-bigname">Pool Time</div>
+          <div class="dc-subname">Ropa de piscina y outfit cómodo</div>
+          <div class="dc-item"><span class="di"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8c1.8 0 2.5 1.6 4 1.6S12 8 12 8s-1 7-5 7-4-7-4-7Z"/><path d="M21 8c-1.8 0-2.5 1.6-4 1.6S12 8 12 8s1 7 5 7 4-7 4-7Z"/><path d="M12 8c0-2.2 1.8-3.4 4-3.4"/></svg></span><span>Trae tu traje de baño y disfruta el agua con tu mejor actitud tropical.</span></div>
+          <img class="dc-art" src="assets/cocktail.webp" alt="" aria-hidden="true">
         </div>
-        <img class="bg-accent" src="assets/cocktail.webp" alt="" aria-hidden="true">
       </div>
-      <div class="transition" aria-hidden="true">
-        <span class="line"></span><span class="pill">🤍 6:00 PM · todos de blanco</span><span class="line"></span>
-      </div>
-      <div class="block night">
-        <div class="content">
-          <span class="badge" aria-hidden="true">🌙</span>
-          <div class="fase">Desde las 6:00 PM</div>
-          <div class="hrs">All White Night</div>
-          <div class="main">Todos vestidos de blanco</div>
-          <div class="li"><span>👔</span><span><b>Hombres:</b> camisa blanca de botones + bermuda blanca o beige.</span></div>
-          <div class="li"><span>👗</span><span><b>Mujeres:</b> outfit blanco (vestido, falda o pantalón).</span></div>
-          <div class="swatches" aria-hidden="true"><i style="background:#ffffff"></i><i style="background:#f4ecdd"></i><i style="background:var(--plata)"></i></div>
+      <!-- NOCHE · ALL WHITE NIGHT -->
+      <div class="dc-view night">
+        <div class="dc-card">
+          <svg class="dc-lights" viewBox="0 0 320 64" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 14 Q 80 40 160 20 T 320 16" fill="none" stroke="rgba(255,235,180,.45)" stroke-width="1.2"/>
+            <g fill="#ffe9b0"><circle class="bulb" cx="30" cy="24" r="3.2"/><circle class="bulb" cx="78" cy="33" r="3.2" style="animation-delay:.3s"/><circle class="bulb" cx="126" cy="29" r="3.2" style="animation-delay:.6s"/><circle class="bulb" cx="174" cy="20" r="3.2" style="animation-delay:.9s"/><circle class="bulb" cx="222" cy="19" r="3.2" style="animation-delay:1.2s"/><circle class="bulb" cx="270" cy="17" r="3.2" style="animation-delay:1.5s"/><circle class="bulb" cx="308" cy="16" r="3.2" style="animation-delay:1.8s"/></g>
+          </svg>
+          <div class="dc-tagrow">
+            <span class="dc-tagbadge"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 14.4 A 8.6 8.6 0 1 1 9.6 3 A 6.7 6.7 0 0 0 21 14.4 Z"/></svg></span>
+            <span class="dc-tag">Desde las 6:00 PM</span>
+          </div>
+          <div class="dc-bigname">All White Night<svg class="swoosh" viewBox="0 0 120 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8 Q 40 1 60 5 T 117 4"/></svg></div>
+          <div class="dc-subname">Todos vestidos de blanco</div>
+          <div class="dc-item"><span class="di"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 5 5 3 8l2.5 2L7 8.5V21h10V8.5L18.5 10 21 8l-2-3-3-2-1.5 2.2a2.6 2.6 0 0 1-5 0Z"/></svg></span><span><b>Hombres:</b> camisa blanca de botones + bermuda blanca o beige.</span></div>
+          <div class="dc-item"><span class="di"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1.5 3.2L18 12l-1.5 2 1.3 6.5a1 1 0 0 1-1 1.2H7.2a1 1 0 0 1-1-1.2L7.5 14 6 12l4.5-5.8Z"/></svg></span><span><b>Mujeres:</b> outfit blanco (vestido, falda o pantalón).</span></div>
+          <div class="dc-swatches" aria-hidden="true"><i style="background:#ffffff"></i><i style="background:#f1e6cf"></i><i style="background:#d8c6ea"></i></div>
+          <span class="dc-art ball-slot" data-ball></span>
         </div>
-        <span class="accent ball-slot" data-ball></span>
       </div>
     </div>
-    <p class="nota">💡 Trae tu outfit blanco para cambiarte durante la transición.</p>
+    <div class="wn-card">
+      <div class="wn-in">
+        <svg class="wn-garments" viewBox="0 0 150 104" aria-hidden="true">
+          <g fill="#e8809f"><path d="M27 5 l1.1 3.2 3.2 1.1 -3.2 1.1 -1.1 3.2 -1.1 -3.2 -3.2 -1.1 3.2 -1.1 Z"/><path d="M41 12 l.8 2.3 2.3 .8 -2.3 .8 -.8 2.3 -.8 -2.3 -2.3 -.8 2.3 -.8 Z"/><path d="M18 15 l.7 2 2 .7 -2 .7 -.7 2 -.7 -2 -2 -.7 2 -.7 Z"/></g>
+          <path d="M48 22 q0 -8 6.5 -8 q6.5 0 6.5 7" fill="none" stroke="#d98aa3" stroke-width="2" stroke-linecap="round"/>
+          <path d="M48 22 L26 40 L70 40" fill="none" stroke="#d98aa3" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M30 40 L23 44 L18 55 L25 59 L30 54 L30 86 L66 86 L66 54 L71 59 L78 55 L73 44 L66 40 L56 40 L48 47 L40 40 Z" fill="#fffdfd" stroke="#e8a9bd" stroke-width="2" stroke-linejoin="round"/>
+          <g fill="#e8a9bd"><circle cx="48" cy="54" r="1.1"/><circle cx="48" cy="62" r="1.1"/><circle cx="48" cy="70" r="1.1"/><circle cx="48" cy="78" r="1.1"/></g>
+          <path d="M112 22 q0 -8 6.5 -8 q6.5 0 6.5 7" fill="none" stroke="#d98aa3" stroke-width="2" stroke-linecap="round"/>
+          <path d="M112 22 L92 40 L132 40" fill="none" stroke="#d98aa3" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M101 40 L109 56 L97 90 Q112 95 127 90 L115 56 L123 40 L112 48 Z" fill="#fffdfd" stroke="#e8a9bd" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M108 57 L116 57" stroke="#e8a9bd" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <div class="wn-head">Al caer el sol,<br>nos vestimos de blanco.</div>
+        <svg class="wn-swoosh" viewBox="0 0 130 10" aria-hidden="true"><path d="M4 7 Q 50 1 80 5 T 126 5"/></svg>
+        <p class="wn-note">Trae tu outfit blanco para cambiarte durante la transición.</p>
+        <a class="wn-btn btn-solid" href="#crono-panel">🪩 Ver el cronograma <svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ===== CRONOGRAMA ===== -->
-<section class="crono">
-  <div class="shell reveal">
-    <div class="crono-head">
-      <span class="ball-slot" data-ball></span>
-      <div class="ct"><span class="cap">C</span>ronograma</div>
-      <div class="cp">Pool Party</div>
-      <div class="cs">¡Se agradece la puntualidad para que no te pierdas ningún momento!</div>
-    </div>
+<section class="crono" id="crono-panel">
+  <div class="shell stagger">
+    <span class="crono-ball ball-slot" data-ball></span>
+    <h2 class="crono-ttl"><span class="cap">C</span>ronograma</h2>
+    <div class="crono-ribbon" aria-hidden="true"><span class="rl"></span><span class="rb">Pool Party</span><span class="rl"></span></div>
+    <p class="crono-sub">¡Se agradece la puntualidad para que no te pierdas ningún momento!<span class="u"></span></p>
     <div class="timeline" id="timeline"><span class="tl-line" aria-hidden="true"></span></div>
   </div>
 </section>
 
 <!-- ===== DETALLE / LLUVIA DE SOBRES ===== -->
 <section class="gift">
-  <div class="shell reveal">
-    <div class="gift-card">
-      <span class="gift-ic" aria-hidden="true">💌</span>
-      <div class="gift-eb">Lluvia de sobres</div>
-      <p class="gift-text">Tu presencia es mi mayor honor,<br>pero si un detalle me quieres brindar,<br>en efectivo lo sabré apreciar.</p>
-    </div>
+  <div class="shell stagger">
+    <svg class="env-anim" viewBox="0 0 96 88" aria-hidden="true">
+      <rect x="20" y="36" width="56" height="46" rx="6" fill="#fff6f0" stroke="#e8a9bd" stroke-width="2"/>
+      <path d="M20 52 L48 70 L76 52 L76 76 a6 6 0 0 1 -6 6 H26 a6 6 0 0 1 -6 -6 Z" fill="#fff" stroke="#e8a9bd" stroke-width="2" stroke-linejoin="round"/>
+      <path class="h" d="M48 60c-2-3.5-7.6-3.2-7.6 1.4 0 3.2 4.7 5.7 7.6 7.6 2.9-1.9 7.6-4.4 7.6-7.6 0-4.6-5.6-4.9-7.6-1.4Z" fill="#f45b97"/>
+      <g class="flap-c"><path d="M20 40 L48 20 L76 40 Z" fill="#ffeef4" stroke="#e8a9bd" stroke-width="2" stroke-linejoin="round"/></g>
+      <g class="bill b1"><rect x="39" y="22" width="18" height="11" rx="2" fill="#8fce93" stroke="#4f9a57" stroke-width="1.2"/><text x="48" y="30.5" font-size="8.5" fill="#2f6b38" text-anchor="middle" font-family="sans-serif" font-weight="700">$</text></g>
+      <g class="bill b2"><rect x="46" y="20" width="15" height="10" rx="2" fill="#a7dcaa" stroke="#4f9a57" stroke-width="1.1"/><text x="53.5" y="27.8" font-size="7" fill="#2f6b38" text-anchor="middle" font-family="sans-serif" font-weight="700">$</text></g>
+      <g class="bill b3"><rect x="35" y="21" width="14" height="10" rx="2" fill="#8fce93" stroke="#4f9a57" stroke-width="1.1"/><text x="42" y="28.8" font-size="7" fill="#2f6b38" text-anchor="middle" font-family="sans-serif" font-weight="700">$</text></g>
+    </svg>
+    <div class="gift-eb">Lluvia de sobres</div>
+    <p class="gift-verse">
+      <span class="l1">El mejor regalo será tenerte conmigo.</span>
+      <span class="l2">Si deseas acompañarlo con un detalle,</span>
+      <span class="l2">un sobre será perfecto. ♡</span>
+    </p>
+    <svg class="gift-underline" viewBox="0 0 240 20" aria-hidden="true">
+      <path d="M12 12 Q 80 4 108 11"/><path d="M132 11 Q 160 4 228 12"/>
+      <path class="hrt" d="M120 7c-1.9-3.3-7-3-7 1.2 0 3 4 5.2 7 7 3-1.8 7-4 7-7 0-4.2-5.1-4.5-7-1.2Z"/>
+    </svg>
   </div>
 </section>
 
@@ -376,7 +780,7 @@ section{position:relative;padding-block:clamp(30px,7vw,54px)}
     <div class="rsvp-card">
       <div class="confirma">¡Confirma tu asistencia!</div>
       <p class="sub">Tu respuesta me ayuda muchísimo a organizar todo 💗</p>
-      <div class="ticket">🎟️ <span><b>Invitación personal e intransferible.</b> Sin acompañantes: solo confirma la persona invitada.</span></div>
+      <div class="ticket">💌 <span><b>Invitación personal e intransferible.</b> Sin acompañantes: solo confirma la persona invitada.</span></div>
       <form class="form" id="rsvp-form" novalidate>
         <div class="field"><label for="g-name">Nombre y apellido</label><input id="g-name" name="name" type="text" autocomplete="name" placeholder="Tu nombre completo" required></div>
         <div class="field"><label>¿Asistirás?</label>
@@ -402,6 +806,10 @@ section{position:relative;padding-block:clamp(30px,7vw,54px)}
         <div class="mini" id="success-mini"></div>
       </div>
       <div class="hostline" id="hostline"></div>
+      <svg class="rsvp-heart" viewBox="0 0 140 18" aria-hidden="true">
+        <path d="M8 10 Q 46 3 62 9"/><path d="M78 9 Q 94 3 132 10"/>
+        <path class="h" d="M70 5c-1.9-3.2-6.8-2.9-6.8 1.2 0 2.9 3.9 5 6.8 6.8 2.9-1.8 6.8-3.9 6.8-6.8 0-4.1-4.9-4.4-6.8-1.2Z"/>
+      </svg>
     </div>
     <div class="host-panel" id="host-panel">
       <h4>Panel de anfitriona · solo tú lo ves</h4>
@@ -411,6 +819,13 @@ section{position:relative;padding-block:clamp(30px,7vw,54px)}
     </div>
   </div>
 </section>
+
+<div id="xfx" aria-hidden="true">
+  <span class="halo"></span>
+  <span class="xspark" style="left:30%;top:34%"><svg viewBox="0 0 20 20"><path d="M10 0 L11.6 8.4 L20 10 L11.6 11.6 L10 20 L8.4 11.6 L0 10 L8.4 8.4 Z"/></svg></span>
+  <span class="xspark" style="right:28%;top:40%;left:auto"><svg viewBox="0 0 20 20"><path d="M10 0 L11.6 8.4 L20 10 L11.6 11.6 L10 20 L8.4 11.6 L0 10 L8.4 8.4 Z"/></svg></span>
+  <span class="xspark" style="left:40%;bottom:34%;top:auto"><svg viewBox="0 0 20 20"><path d="M10 0 L11.6 8.4 L20 10 L11.6 11.6 L10 20 L8.4 11.6 L0 10 L8.4 8.4 Z"/></svg></span>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -452,24 +867,53 @@ $('#maps-btn').href=EVENT.mapsUrl;
   const text=encodeURIComponent(`XV ${EVENT.name} · ${EVENT.concept}`);const details=encodeURIComponent(`Celebración de los 15 años de ${EVENT.name}. Pool Party + All White Night. Recuerda llevar tu cambio de ropa (outfit blanco).`);const loc=encodeURIComponent(`${EVENT.venue}, ${EVENT.zone}`);
   $('#cal-btn').href=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&ctz=${encodeURIComponent(EVENT.tz)}&details=${details}&location=${loc}`;})();
 
+/* ---- Botones-opción: marcar en oscuro al tocar ---- */
+$$('.actions .btn-ref').forEach(b=>b.addEventListener('click',()=>{$$('.actions .btn-ref').forEach(o=>o.classList.remove('on'));b.classList.add('on');}));
+/* ---- Cierre: CTA se oscurece al confirmar ---- */
+$$('.cierre .btn-solid').forEach(b=>b.addEventListener('click',()=>b.classList.add('pressed')));
+
+/* ---- Dress code: sol / luna (día / noche) ---- */
+(function(){const dress=$('#dress-panel');if(!dress)return;const opts=$$('.dc-opt',dress),views=$$('.dc-view',dress);
+  opts.forEach(o=>o.addEventListener('click',()=>{const mode=o.dataset.mode;
+    opts.forEach(x=>x.classList.toggle('on',x===o));
+    views.forEach(v=>v.classList.toggle('on',v.classList.contains(mode)));
+    dress.classList.toggle('night',mode==='night');dress.classList.toggle('day',mode==='day');
+  }));
+})();
+
 /* ---- Cronograma ---- */
 const CRONO=[
-  {t:"2:00 PM – 3:00 PM",a:"Llegada y bienvenida"},
-  {t:"3:00 PM – 4:00 PM",a:"Piscina activa y juegos"},
-  {t:"4:00 PM – 5:00 PM",a:"Piscina activa y juegos"},
-  {t:"5:00 PM – 6:00 PM",a:"Hora de hamburguesas"},
-  {t:"6:00 PM – 6:40 PM",a:"Hora de transición",note:"Todos deben estar vestidos de blanco",pivot:true},
-  {t:"7:00 PM – 7:30 PM",a:"Entrada y vals"},
-  {t:"7:30 PM – 8:30 PM",a:"Neon party y karaoke"},
-  {t:"8:30 PM – 9:00 PM",a:"Torta y cumpleaños"},
+  {t:"2:00 – 3:00 PM",em:"🍹",a:"Llegada y bienvenida"},
+  {t:"3:00 – 4:00 PM",em:"🦩",a:"Piscina activa y juegos"},
+  {t:"4:00 – 5:00 PM",em:"🏖️",a:"Piscina activa y juegos"},
+  {t:"5:00 – 6:00 PM",em:"🍔",a:"Hora de hamburguesas"},
+  {t:"6:00 – 6:40 PM",em:'<svg class="dress-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3 L12 6 L15 3 L16.6 8 L14 10 L15.5 20.5 L8.5 20.5 L10 10 L7.4 8 Z" fill="#ffffff" stroke="#b02e6b" stroke-width="1.2" stroke-linejoin="round"/></svg>',a:"Hora de transición",note:"Todos deben estar vestidos de blanco",pivot:true},
+  {t:"7:00 – 7:30 PM",em:"🥂",a:"Entrada y vals"},
+  {t:"7:30 – 8:30 PM",em:"🎤",a:"Neon party y karaoke"},
+  {t:"8:30 – 9:00 PM",em:"🎂",a:"Torta y cumpleaños"},
 ];
-$('#timeline').insertAdjacentHTML('beforeend',CRONO.map((i,idx)=>`<div class="ti ${i.pivot?'pivot':''}" style="transition-delay:${idx*70}ms"><div class="t">${i.t}</div><span class="mk"></span><div class="ac"><div class="a">${esc(i.a)}</div>${i.note?`<div class="note">${esc(i.note)}</div>`:''}</div></div>`).join(''));
+$('#timeline').insertAdjacentHTML('beforeend',CRONO.map((i,idx)=>`<div class="ti ${i.pivot?'pivot':''}" style="transition-delay:${idx*70}ms"><div class="t">${i.t}</div><span class="mk"></span><div class="rt"><span class="em">${i.em}</span><div><div class="a">${esc(i.a)}</div>${i.note?`<span class="note">${esc(i.note)}</span>`:''}</div></div></div>`).join(''));
 
 /* ---- Reveal + timeline ---- */
-(function(){const items=$$('.reveal');const tl=$('#timeline');
+(function(){const items=$$('.reveal, .stagger');const tl=$('#timeline');
   if(reduced||!('IntersectionObserver' in window)){items.forEach(e=>e.classList.add('in'));if(tl)tl.classList.add('drawn');return;}
-  const io=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});items.forEach(e=>io.observe(e));
+  const io=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.1});items.forEach(e=>io.observe(e));
   if(tl){const io2=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting){tl.classList.add('drawn');io2.unobserve(e.target);}});},{threshold:.2});io2.observe(tl);}})();
+
+/* ---- Transición con bola disco al cambiar de pantalla ---- */
+(function(){
+  if(reduced||!('IntersectionObserver' in window))return;
+  const xfx=$('#xfx'); if(!xfx) return;
+  const panels=$$('section'); let active=-1, ready=false, tmr=null;
+  function flash(){ xfx.classList.remove('go'); void xfx.offsetWidth; xfx.classList.add('go'); clearTimeout(tmr); tmr=setTimeout(()=>xfx.classList.remove('go'),950); }
+  const po=new IntersectionObserver(en=>{
+    en.forEach(e=>{ if(e.isIntersecting && e.intersectionRatio>=0.55){
+      const idx=panels.indexOf(e.target);
+      if(idx!==active){ if(ready && idx!==active) flash(); active=idx; ready=true; }
+    }});
+  },{threshold:[0.55]});
+  panels.forEach(p=>po.observe(p));
+})();
 
 /* ---- RSVP: WhatsApp + registro ---- */
 let DB=null,USER=null;
